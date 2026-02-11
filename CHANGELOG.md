@@ -1,7 +1,7 @@
 ## [10.0.17]
 
 - Fixes issues with semantics
-- Upgraded the [flutter_country_selector](https://github.com/cedvdb/flutter_country_selector) to 1.0.19 to address semantic focus issues
+- Upgraded the [country_selector](https://github.com/cedvdb/country_selector) to 1.0.19 to address semantic focus issues
 
 ## [10.0.16]
 

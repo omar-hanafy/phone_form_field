@@ -1,10 +1,9 @@
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
 
+import 'package:country_selector/country_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_country_selector/flutter_country_selector.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-
 import 'package:phone_form_field/src/validation/allowed_characters.dart';
 import 'package:phone_form_field/src/validation/limit_max_length_formatter.dart';
 import 'package:phone_numbers_parser/metadata.dart';
@@ -90,6 +89,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
   final EdgeInsets scrollPadding;
   final bool enableInteractiveSelection;
   final TextSelectionControls? selectionControls;
+
   bool get selectionEnabled => enableInteractiveSelection;
   final MouseCursor? mouseCursor;
   final ScrollPhysics? scrollPhysics;
