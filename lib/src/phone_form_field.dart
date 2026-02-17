@@ -64,6 +64,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
   final TextStyle? style;
   final StrutStyle? strutStyle;
   final TextAlign? textAlign;
+  final TextDirection? textDirection;
   final TextAlignVertical? textAlignVertical;
   final bool autofocus;
   final String obscuringCharacter;
@@ -127,6 +128,7 @@ class PhoneFormField extends FormField<PhoneNumber> {
     this.strutStyle,
     @Deprecated('Has no effect, Change text directionality instead')
     this.textAlign,
+    this.textDirection,
     this.textAlignVertical,
     this.autofocus = false,
     this.obscuringCharacter = '*',

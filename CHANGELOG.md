@@ -1,3 +1,8 @@
+## [Unreleased]
+
+- Added `textDirection` parameter to `PhoneFormField` to control `TextField.textDirection`.
+- Kept RTL country button placement and padding behavior based on ambient layout direction.
+
 ## [10.0.17]
 
 - Fixes issues with semantics

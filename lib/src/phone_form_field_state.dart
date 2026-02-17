@@ -92,6 +92,7 @@ class PhoneFormFieldState extends FormFieldState<PhoneNumber> {
 
   Widget builder() {
     final textAlignment = _computeTextAlign();
+    final textDirection = widget.textDirection ?? Directionality.of(context);
     final countryButtonForEachSlot = _buildCountryButtonForEachSlot(
       textAlignment,
     );
@@ -114,6 +115,7 @@ class PhoneFormFieldState extends FormFieldState<PhoneNumber> {
                 '[${AllowedCharacters.plus}${AllowedCharacters.digits}${AllowedCharacters.punctuation}]')),
           ],
       onChanged: _onTextfieldChanged,
+      textDirection: textDirection,
       textAlign: _computeTextAlign(),
       autofillHints: widget.autofillHints,
       keyboardType: widget.keyboardType,

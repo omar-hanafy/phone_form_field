@@ -27,37 +27,45 @@ void main() {
       bool limitLength = false,
       bool readOnly = false,
       bool canRequestFocus = true,
+      bool isCountryButtonPersistent = true,
+      TextDirection hostTextDirection = TextDirection.ltr,
+      TextDirection? textDirection,
     }) =>
         MaterialApp(
           localizationsDelegates: PhoneFieldLocalization.delegates,
           supportedLocales: const [Locale('en')],
-          home: Scaffold(
-            body: Builder(builder: (context) {
-              return Form(
-                key: formKey,
-                child: PhoneFormField(
-                  key: phoneKey,
-                  initialValue: initialValue,
-                  onChanged: onChanged,
-                  onSaved: onSaved,
-                  onTapOutside: onTapOutside,
-                  onTapUpOutside: onTapUpOutside,
-                  countryButtonStyle: CountryButtonStyle(
-                    showFlag: showFlagInInput,
-                    showDialCode: showDialCode,
-                    showDropdownIcon: showDropdownIcon,
+          home: Directionality(
+            textDirection: hostTextDirection,
+            child: Scaffold(
+              body: Builder(builder: (context) {
+                return Form(
+                  key: formKey,
+                  child: PhoneFormField(
+                    key: phoneKey,
+                    initialValue: initialValue,
+                    onChanged: onChanged,
+                    onSaved: onSaved,
+                    onTapOutside: onTapOutside,
+                    onTapUpOutside: onTapUpOutside,
+                    countryButtonStyle: CountryButtonStyle(
+                      showFlag: showFlagInInput,
+                      showDialCode: showDialCode,
+                      showDropdownIcon: showDropdownIcon,
+                    ),
+                    controller: controller,
+                    focusNode: focusNode,
+                    validator: validatorBuilder?.call(context),
+                    enabled: enabled,
+                    readOnly: readOnly,
+                    canRequestFocus: canRequestFocus,
+                    isCountryButtonPersistent: isCountryButtonPersistent,
+                    textDirection: textDirection,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    shouldLimitLengthByCountry: limitLength,
                   ),
-                  controller: controller,
-                  focusNode: focusNode,
-                  validator: validatorBuilder?.call(context),
-                  enabled: enabled,
-                  readOnly: readOnly,
-                  canRequestFocus: canRequestFocus,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  shouldLimitLengthByCountry: limitLength,
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         );
 
@@ -793,14 +801,73 @@ void main() {
     });
 
     group('Directionality', () {
-      testWidgets('Using textDirection.LTR on RTL context', (tester) async {
-        await tester.pumpWidget(Directionality(
-          textDirection: TextDirection.rtl,
-          child: getWidget(),
-        ));
-        final finder = find.byType(Directionality);
-        final widget = finder.at(1).evaluate().single.widget as Directionality;
-        expect(widget.textDirection, TextDirection.ltr);
+      testWidgets('RTL host without override uses RTL TextField direction',
+          (tester) async {
+        await tester.pumpWidget(
+          getWidget(hostTextDirection: TextDirection.rtl),
+        );
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.textDirection, TextDirection.rtl);
+      });
+
+      testWidgets('RTL host with LTR override uses LTR TextField direction',
+          (tester) async {
+        await tester.pumpWidget(
+          getWidget(
+            hostTextDirection: TextDirection.rtl,
+            textDirection: TextDirection.ltr,
+          ),
+        );
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.textDirection, TextDirection.ltr);
+      });
+
+      testWidgets(
+          'RTL host keeps country button slot in suffix path when TextField direction is overridden',
+          (tester) async {
+        await tester.pumpWidget(
+          getWidget(
+            hostTextDirection: TextDirection.rtl,
+            textDirection: TextDirection.ltr,
+          ),
+        );
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.decoration?.prefix, isNull);
+        expect(textField.decoration?.prefixIcon, isNull);
+        expect(textField.decoration?.suffixIcon, isNotNull);
+
+        await tester.pumpWidget(
+          getWidget(
+            hostTextDirection: TextDirection.rtl,
+            textDirection: TextDirection.ltr,
+            isCountryButtonPersistent: false,
+          ),
+        );
+        final updatedTextField =
+            tester.widget<TextField>(find.byType(TextField));
+        expect(updatedTextField.decoration?.prefix, isNull);
+        expect(updatedTextField.decoration?.prefixIcon, isNull);
+        expect(updatedTextField.decoration?.suffix, isNotNull);
+      });
+
+      testWidgets('Country button content remains LTR in RTL context',
+          (tester) async {
+        await tester.pumpWidget(
+          getWidget(hostTextDirection: TextDirection.rtl),
+        );
+        final directionalityAncestors = find
+            .ancestor(
+              of: find.byType(CountryButton),
+              matching: find.byType(Directionality),
+            )
+            .evaluate()
+            .map((e) => e.widget as Directionality);
+
+        expect(
+          directionalityAncestors.any((directionality) =>
+              directionality.textDirection == TextDirection.ltr),
+          isTrue,
+        );
       });
     });
 

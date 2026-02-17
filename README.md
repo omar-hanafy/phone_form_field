@@ -12,6 +12,7 @@ Flutter phone input integrated with flutter internationalization
 - Support auto fill and copy paste
 - Uses dart phone_numbers_parser for parsing
 - Form field
+- Optional `textDirection` override for the input text
 
 ## Demo
 
@@ -35,6 +36,7 @@ onChanged: (phoneNumber) => print('changed into $phoneNumber'),
 enabled: true,
 isCountrySelectionEnabled: true,
 isCountryButtonPersistent: true,
+textDirection: TextDirection.ltr, // optional, useful to keep digits LTR in RTL layouts
 countryButtonStyle: const CountryButtonStyle(
 showDialCode: true,
 showIsoCode: true,
